@@ -74,6 +74,14 @@ const RULES = [
     description: 'Большая часть кода закодирована так, чтобы её было трудно прочитать. Само по себе это не всегда плохо, но часто используется, чтобы скрыть вредоносные действия.'
   },
   {
+    id: 'remote-spam-loop',
+    pattern: /(?:while|repeat|for)\s*[\s\S]{0,400}?(?:FireServer|InvokeServer)\s*\(/i,
+    severity: 'medium',
+    points: 25,
+    title: 'Похоже на чит: спамит игровые команды по кругу',
+    description: 'Скрипт в бесконечном цикле много раз подряд вызывает игровые команды (RemoteEvent/RemoteFunction) — так обычно обходят задержки (кулдауны) и правила игры, чтобы получить нечестное преимущество. Это не крадёт твои данные, но за использование таких скриптов игры банят навсегда, без возможности вернуть аккаунт.'
+  },
+  {
     id: 'suspicious-keywords',
     pattern: /\b(stealer|grabber|logger|backdoor|inject(?:ion)?|trojan)\b/i,
     severity: 'high',
@@ -142,7 +150,6 @@ module.exports = async (req, res) => {
     if (remote){
       codeToAnalyze += '\n' + remote;
     } else {
-      // Could not fetch — flag that explicitly instead of silently scoring blind.
       res.status(200).json({
         score: 45,
         findings: [{
