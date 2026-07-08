@@ -74,12 +74,20 @@ const RULES = [
     description: 'Большая часть кода закодирована так, чтобы её было трудно прочитать. Само по себе это не всегда плохо, но часто используется, чтобы скрыть вредоносные действия.'
   },
   {
-    id: 'remote-spam-loop',
-    pattern: /(?:while|repeat|for)\s*[\s\S]{0,400}?(?:FireServer|InvokeServer)\s*\(/i,
-    severity: 'medium',
-    points: 25,
-    title: 'Похоже на чит: спамит игровые команды по кругу',
-    description: 'Скрипт в бесконечном цикле много раз подряд вызывает игровые команды (RemoteEvent/RemoteFunction) — так обычно обходят задержки (кулдауны) и правила игры, чтобы получить нечестное преимущество. Это не крадёт твои данные, но за использование таких скриптов игры банят навсегда, без возможности вернуть аккаунт.'
+    id: 'uses-remote',
+    pattern: /\b(FireServer|InvokeServer)\s*\(/i,
+    severity: 'none',
+    points: 0,
+    title: 'Скрипт использует RemoteEvent / RemoteFunction',
+    description: 'Скрипт отправляет команды напрямую на сервер игры через RemoteEvent или RemoteFunction. Так устроено почти любое взаимодействие с игрой — но если ты не понимаешь, зачем скрипту это нужно именно здесь, лучше спроси кого-то разбирающегося перед запуском.'
+  },
+  {
+    id: 'uses-loop',
+    pattern: /\b(while|repeat|for)\b/i,
+    severity: 'none',
+    points: 0,
+    title: 'Скрипт использует цикл (while / repeat / for)',
+    description: 'В коде есть цикл — часть, которая повторяет действие много раз подряд, иногда бесконечно. Это обычная часть программирования, но именно так часто устроены чит-скрипты, которые постоянно спамят одну и ту же команду.'
   },
   {
     id: 'suspicious-keywords',
@@ -90,6 +98,11 @@ const RULES = [
     description: 'Встречаются термины, которые авторы вредоносных скриптов часто используют для названий своих функций.'
   }
 ];
+
+// Not shown as a separate finding on purpose — this just nudges the score
+// down a hair when a loop and a remote call sit close together (classic
+// spam-cheat shape), without adding a scary-looking extra card.
+const COMBO_PATTERN = /(?:while|repeat|for)\s*[\s\S]{0,400}?(?:FireServer|InvokeServer)\s*\(/i;
 
 function analyzeCode(code){
   const findings = [];
@@ -104,6 +117,10 @@ function analyzeCode(code){
       });
       score -= rule.points;
     }
+  }
+
+  if (COMBO_PATTERN.test(code)){
+    score -= 1;
   }
 
   score = Math.max(0, Math.min(100, score));
