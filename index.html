@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScriptChecker — проверка скриптов Roblox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="scanlines"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">◎</span>
+    <span class="brand-name">ScriptChecker</span>
+  </div>
+  <div class="topbar-sub">проверка Roblox-скриптов перед запуском</div>
+</header>
+
+<main class="stage">
+
+  <!-- STEP 1: input -->
+  <section id="inputStage" class="stage-panel">
+    <h1 class="hero-title">Вставь скрипт — узнай, что он делает</h1>
+    <p class="hero-sub">Скопируй код или ссылку <code>loadstring(...)</code> сюда. Мы не запускаем его на твоём компьютере — мы его читаем и объясняем простыми словами.</p>
+
+    <textarea id="scriptInput" class="script-input" placeholder='Например: loadstring(game:HttpGet("https://..."))()' spellcheck="false"></textarea>
+
+    <button id="checkBtn" class="btn-primary">Проверить скрипт</button>
+    <p class="hint">Никогда не выполняй незнакомые скрипты сам — доверь это нам.</p>
+  </section>
+
+  <!-- STEP 2: scanning -->
+  <section id="scanStage" class="stage-panel hidden">
+    <div class="radar">
+      <div class="radar-ring"></div>
+      <div class="radar-ring ring2"></div>
+      <div class="radar-sweep"></div>
+      <div class="radar-core">◎</div>
+    </div>
+    <p class="scan-label" id="scanLabel">Читаем код…</p>
+  </section>
+
+  <!-- STEP 3: result -->
+  <section id="resultStage" class="stage-panel hidden">
+
+    <div class="gauge-wrap">
+      <svg class="gauge" viewBox="0 0 200 200">
+        <circle class="gauge-track" cx="100" cy="100" r="86"></circle>
+        <circle id="gaugeArc" class="gauge-arc" cx="100" cy="100" r="86"></circle>
+      </svg>
+      <div class="gauge-center">
+        <span id="scoreNumber" class="score-number">0</span>
+        <span class="score-percent">%</span>
+      </div>
+    </div>
+
+    <h2 id="verdictTitle" class="verdict-title">—</h2>
+    <p id="verdictSub" class="verdict-sub">—</p>
+
+    <button id="detailsBtn" class="btn-secondary">Просмотреть результат</button>
+
+    <div id="detailsPanel" class="details-panel hidden">
+      <ul id="findingsList" class="findings-list"></ul>
+      <p class="details-footnote">Мы показываем только то, <b>что скрипт пытается делать</b> — не сам код.</p>
+    </div>
+
+    <button id="resetBtn" class="btn-ghost">Проверить другой скрипт</button>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>
+    Спасибо за использование ScriptChecker. Мы <b>не рекомендуем</b> использовать читы в Roblox — это плохо
+    для сообщества игры, и за это можно получить бан навсегда, без возможности восстановления.
+    Сервис предоставляется в информационных целях: мы не несём ответственности за то, как посетители
+    используют полученную информацию.
+  </p>
+  <p class="footer-org">ScriptChecker · независимый некоммерческий проект</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
