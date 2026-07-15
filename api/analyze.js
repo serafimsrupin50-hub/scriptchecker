@@ -99,9 +99,6 @@ const RULES = [
   }
 ];
 
-// Not shown as a separate finding on purpose — this just nudges the score
-// down a hair when a loop and a remote call sit close together (classic
-// spam-cheat shape), without adding a scary-looking extra card.
 const COMBO_PATTERN = /(?:while|repeat|for)\s*[\s\S]{0,400}?(?:FireServer|InvokeServer)\s*\(/i;
 
 function analyzeCode(code){
@@ -131,7 +128,13 @@ async function fetchRemote(url){
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 6000);
   try {
-    const res = await fetch(url, { signal: controller.signal });
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Accept': 'text/plain,text/html,*/*'
+      }
+    });
     if (!res.ok) return null;
     const text = await res.text();
     return text.slice(0, 200000); // cap size
